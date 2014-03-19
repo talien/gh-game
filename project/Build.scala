@@ -10,6 +10,8 @@ object ApplicationBuild extends Build {
   val appDependencies = Seq(
     // Add your project dependencies here,
   )
+  
+  val scalaVersion = "2.10"
 
   val main = PlayProject(
     appName, appVersion, appDependencies, mainLang = SCALA
