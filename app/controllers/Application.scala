@@ -3,10 +3,10 @@ package controllers
 import play.api._
 import play.api.mvc._
 
-object Application extends Controller {
+object Application extends Controller with securesocial.core.SecureSocial {
   
-  def index = Action {
-    Ok(views.html.index())
+  def index = SecuredAction { implicit request => {
+      Ok(views.html.index())
+    }
   }
-  
 }
