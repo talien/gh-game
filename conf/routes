@@ -1,5 +1,7 @@
 GET	/       controllers.Application.index
 
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
 GET     /login                      securesocial.controllers.LoginPage.login
 GET     /logout                     securesocial.controllers.LoginPage.logout
 
