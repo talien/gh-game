@@ -7,7 +7,7 @@ import securesocial.controllers.TemplatesPlugin
 
 object Application extends Controller with securesocial.core.SecureSocial {
   
-  def index = SecuredAction { implicit request => {
+  def index = SecuredAction(WithProvider("github")) { implicit request => {
       Ok(views.html.index())
     }
   }
