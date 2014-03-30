@@ -2,5 +2,5 @@
 9995:securesocial.core.DefaultIdGenerator
 9996:securesocial.core.providers.utils.DefaultPasswordValidator
 9997:securesocial.controllers.DefaultTemplatesPlugin
-10004:securesocial.core.providers.UsernamePasswordProvider
+9998:service.InMemoryUserService
 10005:securesocial.core.providers.GitHubProvider
