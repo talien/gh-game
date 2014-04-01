@@ -1,0 +1,32 @@
+@(content: Html)
+@import securesocial.core.IdentityProvider
+
+@import securesocial.controllers.TemplatesPlugin
+@import securesocial.core.Registry
+@import securesocial.core.IdentityProvider
+@import securesocial.core.providers.UsernamePasswordProvider
+@import securesocial.core.AuthenticationMethod._
+@import securesocial.core.providers.utils.RoutesHelper
+<html>
+    
+    <head>
+        <title>gh-game</title>
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"
+        rel="stylesheet">
+    </head>
+    
+    <body>
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <span class="brand" >gh-game</span>
+                </div>
+            </div>
+        </div> 
+
+        <div class="container" style="padding-top:30px">
+           @content
+        </div>
+    </body>
+
+</html>

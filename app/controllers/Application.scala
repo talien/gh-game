@@ -8,7 +8,7 @@ import securesocial.controllers.TemplatesPlugin
 object Application extends Controller with securesocial.core.SecureSocial {
   
   def index = SecuredAction { implicit request => {
-      Ok(views.html.index())
+      Ok(views.html.index(request.user))
     }
   }
 }

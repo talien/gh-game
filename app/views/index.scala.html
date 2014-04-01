@@ -1,25 +1,7 @@
-@import securesocial.core.IdentityProvider
+@(user: securesocial.core.Identity)
 
-@import securesocial.controllers.TemplatesPlugin
-@import securesocial.core.Registry
-@import securesocial.core.IdentityProvider
-@import securesocial.core.providers.UsernamePasswordProvider
-@import securesocial.core.AuthenticationMethod._
-@import securesocial.core.providers.utils.RoutesHelper
-<html>
-    
-    <head>
-        <title>gh-game</title>
-        <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"
-        rel="stylesheet">
-    </head>
-    
-    <body>
-        <div class="container">
-            <div class="row">
-              <h1>Welcome to gh-game!</h1>
-            </div>
-        </div>
-    </body>
-
-</html>
+@main {
+  <div class="page-header">
+      <h2><img src="@user.avatarUrl" alt="@user.firstName" width="40px" height="40px"/> Hey @user.firstName @user.lastName (@user.fullName) </h2>
+  </div>
+}
