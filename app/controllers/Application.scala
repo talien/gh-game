@@ -27,4 +27,9 @@ object Application extends Controller with securesocial.core.SecureSocial {
       Ok(views.html.index(request.user, repos))
     }
   }
+
+  def repo(repositoryName: String) = SecuredAction { implicit request => {
+      Ok(views.html.repo(repositoryName))
+    }
+  }
 }

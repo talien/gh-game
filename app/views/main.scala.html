@@ -9,25 +9,25 @@
 @import securesocial.core.providers.utils.RoutesHelper
 <!DOCTYPE html>
 <html>
+ 
+  <head>
+    <title>gh-game</title>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/gh-game.css" rel="stylesheet">
+  </head>
     
-    <head>
-        <title>gh-game</title>
-        <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"
-        rel="stylesheet">
-    </head>
-    
-    <body>
-        <div class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container">
-                    <span class="brand" >gh-game</span>
-                </div>
-            </div>
-        </div> 
+  <body>
+     <div class="navbar navbar-inverse navbar-fixed-top">
+       <div class="container" style="padding-top:3px">
+          <div class="navbar-header">
+            <span class="brand" >gh-game</span>
+          </div>
+       </div>
+     </div> 
 
-        <div class="container" style="padding-top:30px">
+     <div class="container" style="padding-top:30px">
            @content
-        </div>
-    </body>
+     </div>
+  </body>
 
 </html>
