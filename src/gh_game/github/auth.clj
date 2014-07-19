@@ -3,6 +3,7 @@
             [friend-oauth2.workflow :as oauth2]
             [friend-oauth2.util :refer [format-config-uri
                                         get-access-token-from-params]]
+            [gh-game.github.core :as github]
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])))
 
@@ -25,9 +26,29 @@
                               :grant_type "authorization_code"
                               :redirect_uri (format-config-uri client-config)}}})
 
+(defn get-access-token-from-request [request]
+  (let [authentications (get-in request [:session :cemerick.friend/identity :authentications])
+        access-token (:access-token (first (first authentications)))]
+        access-token))
+
+(defn store-github-login-in-session [request response]
+  (if (contains? (:session request) :github-login)
+    {
+      :status 200
+      :headers {"Content-Type" "text/html"}
+      :body response
+      :session (:session request)
+    }
+    {
+      :status 200
+      :headers {"Content-Type" "text/html"}
+      :body response
+      :session (assoc (:session request) :github-login (:login (github/get-current-user (get-access-token-from-request request))))
+    }))
+
 (defn github-authorized [controller]
   (fn [request]
-    (friend/authorize #{::user} (controller request))))
+    (store-github-login-in-session request (friend/authorize #{::user} (controller request)))))
 
 (defn github-auth [router]
   (friend/authenticate
@@ -43,8 +64,3 @@
                                    {:identity token
                                     :roles #{::user}})
                    })]}))
-
-(defn get-access-token-from-request [request]
-  (let [authentications (get-in request [:session :cemerick.friend/identity :authentications])
-        access-token (:access-token (first (first authentications)))]
-        access-token))

@@ -13,6 +13,8 @@
   (GET "/" request views/index)
   (GET "/status" request views/status)
   (GET "/repos" request (gh-auth/github-authorized views/repos))
+  (GET "/issues/:repo" request (gh-auth/github-authorized views/issues))
+  (route/resources "/")
 
   (friend/logout (ANY "/logout" request (ring.util.response/redirect "/"))))
 
