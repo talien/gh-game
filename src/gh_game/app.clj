@@ -33,21 +33,14 @@
                               :grant_type "authorization_code"
                               :redirect_uri (format-config-uri client-config)}}})
 
-(defn authed-repos [request]
-  (friend/authorize #{::user} (render-repos-page request)))
+(defn github-authorized [controller]
+  (fn [request]
+   (friend/authorize #{::user} (controller request))))
 
-(defroutes gh-game-app
-  (GET "/" request "<a href=\"/repos\">My Github Repositories</a><br><a href=\"/status\">Status</a>")
-  (GET "/status" request
-       (render-status-page request))
-  (GET "/repos" request authed-repos)
 
-  (friend/logout (ANY "/logout" request (ring.util.response/redirect "/"))))
-
-(def app-handler
-  (handler/site
-   (friend/authenticate
-    gh-game-app
+(defn github-auth [router]
+  (friend/authenticate
+    router
     {:allow-anon? false
      :workflows [(oauth2/workflow
                   {:client-config client-config
@@ -58,7 +51,26 @@
                    :credential-fn (fn [token]
                                    {:identity token
                                     :roles #{::user}})
-                  })]})))
+                  })]}))
+
+(defn get-access-token-from-request [request]
+  (let [authentications (get-in request [:session :cemerick.friend/identity :authentications])
+        access-token (:access-token (first (first authentications)))]
+        access-token))
+
+
+(defroutes gh-game-app
+  (GET "/" request "<a href=\"/repos\">My Github Repositories</a><br><a href=\"/status\">Status</a>")
+  (GET "/status" request
+       (render-status-page request))
+  (GET "/repos" request (github-authorized render-repos-page))
+
+  (friend/logout (ANY "/logout" request (ring.util.response/redirect "/"))))
+
+(def app-handler
+  (handler/site
+   (github-auth gh-game-app)
+   ))
 
 (defn render-status-page [request]
   (let [count (:count (:session request) 0)
@@ -67,11 +79,6 @@
            (str "<p>We've hit the session page " (:count session)
                 " times.</p><p>The current session: " session "</p>"))
          (assoc :session session))))
-
-(defn get-access-token-from-request [request]
-  (let [authentications (get-in request [:session :cemerick.friend/identity :authentications])
-        access-token (:access-token (first (first authentications)))]
-        access-token))
 
 (defn render-repos-page
   [request]
