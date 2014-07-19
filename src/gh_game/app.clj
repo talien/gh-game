@@ -4,72 +4,23 @@
             [compojure.route :as route]
             [cemerick.friend :as friend]
             [clj-http.client :as client]
-            [friend-oauth2.workflow :as oauth2]
-            [friend-oauth2.util :refer [format-config-uri get-access-token-from-params]]
             [cheshire.core :as j]
-            (cemerick.friend [workflows :as workflows]
-                             [credentials :as creds])))
+            [gh-game.github.auth :as gh-auth]))
 
 (declare render-status-page)
 (declare render-repos-page)
-(declare get-github-repos)
-
-(def client-config
-  {:client-id (System/getenv "GITHUB_CLIENTID")
-   :client-secret (System/getenv "GITHUB_SECRET")
-   :callback {:domain "http://localhost:3000" :path "/github"}})
-
-(def uri-config
-  {:authentication-uri {:url "https://github.com/login/oauth/authorize"
-                        :query {:client_id (:client-id client-config)
-                                :response_type "code"
-                                :redirect_uri (format-config-uri client-config)
-                                :scope "user"
-                                }}
-
-   :access-token-uri {:url "https://github.com/login/oauth/access_token"
-                      :query {:client_id (:client-id client-config)
-                              :client_secret (:client-secret client-config)
-                              :grant_type "authorization_code"
-                              :redirect_uri (format-config-uri client-config)}}})
-
-(defn github-authorized [controller]
-  (fn [request]
-   (friend/authorize #{::user} (controller request))))
-
-
-(defn github-auth [router]
-  (friend/authenticate
-    router
-    {:allow-anon? false
-     :workflows [(oauth2/workflow
-                  {:client-config client-config
-                   :uri-config uri-config
-                   :auth-error-fn (fn [error]
-                                   (ring.util.response/response error))
-                   :access-token-parsefn get-access-token-from-params
-                   :credential-fn (fn [token]
-                                   {:identity token
-                                    :roles #{::user}})
-                  })]}))
-
-(defn get-access-token-from-request [request]
-  (let [authentications (get-in request [:session :cemerick.friend/identity :authentications])
-        access-token (:access-token (first (first authentications)))]
-        access-token))
-
 
 (defroutes gh-game-app
   (GET "/" request "<a href=\"/repos\">My Github Repositories</a><br><a href=\"/status\">Status</a>")
   (GET "/status" request
        (render-status-page request))
-  (GET "/repos" request (github-authorized render-repos-page))
+  (GET "/repos" request (gh-auth/github-authorized render-repos-page))
 
   (friend/logout (ANY "/logout" request (ring.util.response/redirect "/"))))
 
 (def app-handler
   (handler/site
-   (github-auth gh-game-app)
+   (gh-auth/github-auth gh-game-app)
    ))
 
 (defn render-status-page [request]
@@ -80,10 +31,6 @@
                 " times.</p><p>The current session: " session "</p>"))
          (assoc :session session))))
 
-(defn render-repos-page
-  [request]
-  (str (vec (map :name (get-github-repos (get-access-token-from-request request))))))
-
 (defn get-github-repos
   "Github API call for the current authenticated users repository list."
   [access-token]
@@ -91,3 +38,8 @@
         response (client/get url {:accept :json})
         repos (j/parse-string (:body response) true)]
     repos))
+
+(defn render-repos-page
+  [request]
+  (str (vec (map :name (get-github-repos (gh-auth/get-access-token-from-request request))))))
+
