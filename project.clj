@@ -9,11 +9,12 @@
   :lein-coffee
   {:compile-hook true ;; Invoke coffee at `lein compile`
    :jar-hook true ;; Invoke coffee at `lein jar`
-   :coffee-version ">=1.6"
+   :coffee-version ">=1.0"
    :coffee
-      {:sources ["src/coffee/test.coffee"]
+      {:sources ["src/coffee/"]
        :output "resources/public/js/"
        :bare true
+       :bin "coffee"
       }
   }
   :dependencies [[org.clojure/clojure "1.6.0"]
