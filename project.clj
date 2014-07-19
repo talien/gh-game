@@ -5,6 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :plugins [[lein-ring "0.8.11"] [lein-coffee "0.4.1"]]
   :ring {:handler gh-game.app/app-handler}
+  :min-lein-version "2.0.0"
   :lein-coffee
   {:compile-hook true ;; Invoke coffee at `lein compile`
    :jar-hook true ;; Invoke coffee at `lein jar`
