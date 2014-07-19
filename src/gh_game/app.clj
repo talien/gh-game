@@ -7,6 +7,7 @@
             [gh-game.github.auth :as gh-auth]
             [gh-game.github.core :as github]
             [gh-game.views :as views]
+            [ring.adapter.jetty :as ring]
             ))
 
 (defroutes gh-game-app
@@ -22,3 +23,10 @@
   (handler/site
    (gh-auth/github-auth gh-game-app)
    ))
+
+(defn start [port]
+  (ring/run-jetty #'app-handler {:port (or port 8080) :join? false}))
+
+(defn -main []
+  (let [port (Integer. (or (System/getenv "PORT") "8080"))]
+      (start port)))
