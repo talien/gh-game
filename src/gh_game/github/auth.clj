@@ -10,7 +10,7 @@
 (def client-config
   {:client-id (System/getenv "GITHUB_CLIENTID")
    :client-secret (System/getenv "GITHUB_SECRET")
-   :callback {:domain "http://localhost:3000" :path "/github"}})
+   :callback {:domain (System/getenv "APP_DOMAIN") :path "/github"}})
 
 (def uri-config
   {:authentication-uri {:url "https://github.com/login/oauth/authorize"
